@@ -12,6 +12,7 @@ import type { BaseLanguageModelInput } from "@langchain/core/language_models/bas
 import type { Runnable, RunnableConfig } from "@langchain/core/runnables"
 import { whoisSchema } from "./lib/schemas"
 import { bearerAuth } from "hono/bearer-auth"
+
 type Bindings = {
   AI: Ai
   CLOUDFLARE_ACCOUNT_ID: string
