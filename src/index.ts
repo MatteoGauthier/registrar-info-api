@@ -1,7 +1,5 @@
 import { zValidator } from "@hono/zod-validator"
-import { ChatCloudflareWorkersAI } from "@langchain/cloudflare"
 import { ChatGroq } from "@langchain/groq"
-import { ChatOpenAI } from "@langchain/openai"
 import { Hono } from "hono"
 import { cache } from "hono/cache"
 import { logger } from "hono/logger"
@@ -10,8 +8,8 @@ import { getRawWhois } from "./lib/utils"
 
 import type { BaseLanguageModelInput } from "@langchain/core/language_models/base"
 import type { Runnable, RunnableConfig } from "@langchain/core/runnables"
-import { whoisSchema } from "./lib/schemas"
 import { bearerAuth } from "hono/bearer-auth"
+import { whoisSchema } from "./lib/schemas"
 
 type Bindings = {
   AI: Ai
@@ -29,21 +27,6 @@ declare module "hono" {
 const app = new Hono<{ Bindings: Bindings }>()
 
 app.use(async (c, next) => {
-  const cfModel = new ChatCloudflareWorkersAI({
-    model: "@hf/nousresearch/hermes-2-pro-mistral-7b",
-    cloudflareAccountId: c.env.CLOUDFLARE_ACCOUNT_ID,
-    cloudflareApiToken: c.env.CLOUDFLARE_API_TOKEN,
-  })
-
-  const openAiModel = new ChatOpenAI({
-    model: "@hf/nousresearch/hermes-2-pro-mistral-7b",
-    apiKey: c.env.CLOUDFLARE_API_TOKEN,
-    configuration: {
-      apiKey: c.env.CLOUDFLARE_API_TOKEN,
-      baseURL: `https://api.cloudflare.com/client/v4/accounts/${c.env.CLOUDFLARE_ACCOUNT_ID}/ai/v1`,
-    },
-  })
-
   const groqModel = new ChatGroq({
     model: "llama3-groq-8b-8192-tool-use-preview",
     apiKey: c.env.GROQ_API_KEY,
